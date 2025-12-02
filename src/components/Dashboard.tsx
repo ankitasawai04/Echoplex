@@ -1,30 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, AlertTriangle, Users, MapPin, Camera, Radio, Search, Bone as Drone, Shield, Zap, Brain, Eye } from 'lucide-react';
+import { Activity, AlertTriangle, Users, MapPin, Camera, Radio, Search, Bone as Drone, Shield, Zap, Brain, Eye, MonitorCheck} from 'lucide-react';
 import CrowdMonitor from './CrowdMonitor';
 import RiskAssessment from './RiskAssessment';
-import IncidentManagement from './IncidentManagement';
-import ResourceDispatch from './ResourceDispatch';
-import AnomalyDetection from './AnomalyDetection';
+//import IncidentManagement from './IncidentManagement';
+//import ResourceDispatch from './ResourceDispatch';
+//import AnomalyDetection from './AnomalyDetection';
 import LostAndFound from './LostAndFound';
 import CommandInterface from './CommandInterface';
 import EventOverview from './EventOverview';
+import CheckInSection from './CheckInSection';
 
 const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [alertLevel, setAlertLevel] = useState<'low' | 'medium' | 'high'>('medium');
-  const [totalAttendees, setTotalAttendees] = useState(47892);
-  const [activeIncidents, setActiveIncidents] = useState(5);
+  const [totalAttendees, setTotalAttendees] = useState(0);
+  const [activeIncidents, setActiveIncidents] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+  const eventId = 'EVT-2024-001';
+
+  const fetchTotalAttendees = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/attendees/zones/${eventId}`);
+      const data = await response.json();
+
+      if (data.success) {
+        setTotalAttendees(data.data.totalCheckedIn);
+      }
+    } catch (error) {
+      console.error('Failed to fetch total attendees:', error);
+    }
+  };
+
+ 
   useEffect(() => {
     // Update time every second
     const timeInterval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
+    // Fetch total attendees immediately
+  fetchTotalAttendees();
+  
+  // Update total attendees every 5 seconds
+  const attendeeInterval = setInterval(() => {
+    fetchTotalAttendees();
+  }, 5000);
+    
+
     // Simulate real-time updates
     const dataInterval = setInterval(() => {
-      setTotalAttendees(prev => prev + Math.floor(Math.random() * 20 - 10));
+      
       
       // Simulate alert level changes
       if (Math.random() < 0.1) {
@@ -32,27 +59,31 @@ const Dashboard: React.FC = () => {
         setAlertLevel(levels[Math.floor(Math.random() * levels.length)]);
       }
       
-      // Simulate incident count changes
+      //Simulate incident count changes
       if (Math.random() < 0.15) {
         setActiveIncidents(prev => Math.max(0, Math.min(10, prev + Math.floor(Math.random() * 3 - 1))));
       }
-    }, 3000);
+    }, 3000); 
 
     return () => {
+      
       clearInterval(timeInterval);
+      clearInterval(attendeeInterval);
       clearInterval(dataInterval);
     };
-  }, []);
+  }, []); 
 
   const tabs = [
+    { id: 'CheckIn', label: 'CheckIn Section', icon: MonitorCheck, description: 'Real-time attendance count'},
     { id: 'overview', label: 'Event Overview', icon: Activity, description: 'Real-time event status' },
     { id: 'crowd', label: 'Crowd Intelligence', icon: Users, description: 'AI crowd analysis' },
     { id: 'risk', label: 'Risk Assessment', icon: Shield, description: 'Predictive safety analytics' },
-    { id: 'incidents', label: 'Incident Command', icon: AlertTriangle, description: 'Active incident management' },
-    { id: 'resources', label: 'Resource Dispatch', icon: Radio, description: 'Dynamic resource allocation' },
-    { id: 'anomalies', label: 'AI Detection', icon: Zap, description: 'Multimodal anomaly detection' },
+    //{ id: 'incidents', label: 'Incident Command', icon: AlertTriangle, description: 'Active incident management' },
+    //{ id: 'resources', label: 'Resource Dispatch', icon: Radio, description: 'Dynamic resource allocation' },
+    //{ id: 'anomalies', label: 'AI Detection', icon: Zap, description: 'Multimodal anomaly detection' },
     { id: 'lost-found', label: 'Lost & Found AI', icon: Search, description: 'Facial recognition search' },
     { id: 'command', label: 'AI Command', icon: Brain, description: 'Natural language intelligence' },
+    
   ];
 
   const getAlertColor = (level: string) => {
@@ -73,12 +104,14 @@ const Dashboard: React.FC = () => {
 
   const renderActiveComponent = () => {
     switch (activeTab) {
+     
+      case 'CheckIn' : return <CheckInSection />;
       case 'overview': return <EventOverview />;
       case 'crowd': return <CrowdMonitor />;
       case 'risk': return <RiskAssessment />;
-      case 'incidents': return <IncidentManagement />;
-      case 'resources': return <ResourceDispatch />;
-      case 'anomalies': return <AnomalyDetection />;
+      //case 'incidents': return <IncidentManagement />;
+      //case 'resources': return <ResourceDispatch />;
+      //case 'anomalies': return <AnomalyDetection />;
       case 'lost-found': return <LostAndFound />;
       case 'command': return <CommandInterface />;
       default: return <EventOverview />;
@@ -114,10 +147,7 @@ const Dashboard: React.FC = () => {
             <div className="text-right">
               <div className="text-sm text-slate-400">Total Attendees</div>
               <div className="text-xl font-bold text-white">{totalAttendees.toLocaleString()}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-slate-400">Active Incidents</div>
-              <div className="text-xl font-bold text-amber-400">{activeIncidents}</div>
+            
             </div>
             <div className="flex items-center space-x-3 bg-slate-700/30 rounded-lg px-4 py-2">
               <div className={`h-3 w-3 rounded-full animate-pulse shadow-lg ${getAlertColor(alertLevel)}`}></div>
@@ -164,6 +194,10 @@ const Dashboard: React.FC = () => {
           {renderActiveComponent()}
         </div>
       </main>
+      {/* QR Code Check-In System */}
+      <div className="p-6 space-y-6">
+        
+      </div>
 
       {/* Enhanced Status Bar with Google AI Stack */}
       <div className="fixed bottom-0 left-0 right-0 bg-slate-800/90 backdrop-blur-md border-t border-slate-700/50 px-6 py-3 z-40">
@@ -206,5 +240,6 @@ const Dashboard: React.FC = () => {
     </div>
   );
 };
+
 
 export default Dashboard;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+/*import React, { useState, useEffect } from 'react';
 import { AlertTriangle, Clock, MapPin, Users, Phone, CheckCircle, XCircle, Play, Pause } from 'lucide-react';
 
 interface Incident {
@@ -153,7 +153,7 @@ const IncidentManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Statistics Header */}
+      {/* Statistics Header }
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-gray-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
@@ -202,7 +202,7 @@ const IncidentManagement: React.FC = () => {
         </div>
       </div>
 
-      {/* Create New Incident */}
+      {/* Create New Incident }
       <div className="bg-gray-800 rounded-lg p-6">
         <h3 className="text-lg font-semibold mb-4">Create New Incident</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
@@ -253,7 +253,7 @@ const IncidentManagement: React.FC = () => {
         </button>
       </div>
 
-      {/* Incident Filters */}
+      {/* Incident Filters }
       <div className="bg-gray-800 rounded-lg p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Incident Log</h3>
@@ -274,7 +274,7 @@ const IncidentManagement: React.FC = () => {
           </div>
         </div>
 
-        {/* Incident List */}
+        {/* Incident List }
         <div className="space-y-4">
           {filteredIncidents.map((incident) => (
             <div key={incident.id} className="bg-gray-700 rounded-lg p-4">
@@ -350,4 +350,4 @@ const IncidentManagement: React.FC = () => {
   );
 };
 
-export default IncidentManagement;
+export default IncidentManagement; */

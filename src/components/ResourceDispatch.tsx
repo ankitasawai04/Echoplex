@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+/*import React, { useState, useEffect } from 'react';
 import { Radio, MapPin, Battery, Clock, Users, Truck, Heart, Shield } from 'lucide-react';
 
 interface Resource {
@@ -177,7 +177,7 @@ const ResourceDispatch: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Resource Summary */}
+      {/* Resource Summary }
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-gray-800 rounded-lg p-6">
           <div className="flex items-center justify-between">
@@ -228,7 +228,7 @@ const ResourceDispatch: React.FC = () => {
         </div>
       </div>
 
-      {/* Manual Dispatch */}
+      {/* Manual Dispatch }
       <div className="bg-gray-800 rounded-lg p-6">
         <h3 className="text-lg font-semibold mb-4">Manual Dispatch</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -261,9 +261,9 @@ const ResourceDispatch: React.FC = () => {
         </div>
       </div>
 
-      {/* Resource Grid */}
+      {/* Resource Grid }
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Active Resources */}
+        {/* Active Resources }
         <div className="bg-gray-800 rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-4">Active Resources</h3>
           <div className="space-y-3">
@@ -314,7 +314,7 @@ const ResourceDispatch: React.FC = () => {
           </div>
         </div>
 
-        {/* Dispatch History */}
+        {/* Dispatch History }
         <div className="bg-gray-800 rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-4">Recent Dispatches</h3>
           <div className="space-y-3">
@@ -352,7 +352,7 @@ const ResourceDispatch: React.FC = () => {
         </div>
       </div>
 
-      {/* Resource Map View */}
+      {/* Resource Map View }
       <div className="bg-gray-800 rounded-lg p-6">
         <h3 className="text-lg font-semibold mb-4 flex items-center">
           <MapPin className="h-5 w-5 mr-2 text-blue-400" />
@@ -370,4 +370,4 @@ const ResourceDispatch: React.FC = () => {
   );
 };
 
-export default ResourceDispatch;
+export default ResourceDispatch; */

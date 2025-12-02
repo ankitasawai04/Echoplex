@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+/*import React, { useState, useEffect } from 'react';
 import { Zap, Camera, AlertTriangle, TrendingUp, Eye, Activity, Flame, Wind, Brain, Cpu } from 'lucide-react';
 
 interface Anomaly {
@@ -203,8 +203,8 @@ const AnomalyDetection: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Enhanced Detection Metrics with Google AI Stack */}
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+      {/* Enhanced Detection Metrics with Google AI Stack */
+      /*<div className="grid grid-cols-1 md:grid-cols-6 gap-6">
         <div className="bg-gradient-to-br from-cyan-900/50 to-cyan-800/30 rounded-xl p-6 border border-cyan-700/20">
           <div className="flex items-center justify-between">
             <div>
@@ -272,8 +272,8 @@ const AnomalyDetection: React.FC = () => {
         </div>
       </div>
 
-      {/* Google AI Stack Health Monitor */}
-      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
+      {/* Google AI Stack Health Monitor}
+      /*<div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
         <h3 className="text-lg font-semibold mb-4 flex items-center">
           <Brain className="h-5 w-5 mr-2 text-cyan-400" />
           Google AI Stack Health Monitor
@@ -369,8 +369,8 @@ const AnomalyDetection: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Model Performance Dashboard */}
-      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
+      {/* AI Model Performance Dashboard */
+      /*<div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
         <h3 className="text-lg font-semibold mb-4 flex items-center">
           <Cpu className="h-5 w-5 mr-2 text-cyan-400" />
           AI Model Performance Dashboard
@@ -408,8 +408,8 @@ const AnomalyDetection: React.FC = () => {
         </div>
       </div>
 
-      {/* Live Anomaly Detection Feed */}
-      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
+      {/* Live Anomaly Detection Feed */
+      /*<div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700/50">
         <h3 className="text-lg font-semibold mb-4 flex items-center">
           <Zap className="h-5 w-5 mr-2 text-cyan-400" />
           Live Multimodal Anomaly Detection Feed
@@ -512,4 +512,4 @@ const AnomalyDetection: React.FC = () => {
   );
 };
 
-export default AnomalyDetection;
+export default AnomalyDetection; */
