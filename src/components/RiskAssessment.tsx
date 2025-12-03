@@ -1,276 +1,330 @@
+// src/components/IncidentManagement.tsx
 import React, { useState, useEffect } from 'react';
-import { Shield, AlertTriangle, TrendingUp, Cloud, Users, Zap, Clock } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, XCircle, TrendingUp, MapPin, AlertOctagon } from 'lucide-react';
+import { attendeeService } from '../services/attendeeService';
 
-const RiskAssessment: React.FC = () => {
-  const [riskScore, setRiskScore] = useState(0.34);
-  const [weatherScore, setWeatherScore] = useState(0.15);
-  const [crowdScore, setCrowdScore] = useState(0.68);
-  const [securityScore, setSecurityScore] = useState(0.12);
+const IncidentManagement: React.FC = () => {
+  const [riskData, setRiskData] = useState(attendeeService.getRiskAssessment());
+  const [stats, setStats] = useState(attendeeService.getStats());
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setRiskScore(Math.max(0, Math.min(1, 0.34 + (Math.random() - 0.5) * 0.1)));
-      setWeatherScore(Math.max(0, Math.min(1, 0.15 + (Math.random() - 0.5) * 0.05)));
-      setCrowdScore(Math.max(0, Math.min(1, 0.68 + (Math.random() - 0.5) * 0.1)));
-      setSecurityScore(Math.max(0, Math.min(1, 0.12 + (Math.random() - 0.5) * 0.05)));
-    }, 3000);
-    return () => clearInterval(interval);
+    const updateData = () => {
+      setRiskData(attendeeService.getRiskAssessment());
+      setStats(attendeeService.getStats());
+    };
+
+    updateData();
+    const unsubscribe = attendeeService.subscribe(updateData);
+
+    // Update every 15 seconds for risk assessment
+    const interval = setInterval(updateData, 15000);
+
+    return () => {
+      unsubscribe();
+      clearInterval(interval);
+    };
   }, []);
 
-  const riskFactors = [
-    { 
-      name: 'Weather Conditions', 
-      score: weatherScore, 
-      icon: Cloud, 
-      details: 'Clear skies, light wind',
-      trend: 'stable'
-    },
-    { 
-      name: 'Crowd Density', 
-      score: crowdScore, 
-      icon: Users, 
-      details: 'High density at main stage',
-      trend: 'increasing'
-    },
-    { 
-      name: 'Security Incidents', 
-      score: securityScore, 
-      icon: Shield, 
-      details: 'Minor incidents reported',
-      trend: 'decreasing'
-    },
-    { 
-      name: 'Infrastructure', 
-      score: 0.08, 
-      icon: Zap, 
-      details: 'All systems operational',
-      trend: 'stable'
-    },
-  ];
-
-  const predictions = [
-    {
-      time: '15:30',
-      risk: 'Medium',
-      event: 'Main act performance starts',
-      probability: 0.72,
-      mitigation: 'Deploy additional crowd control staff'
-    },
-    {
-      time: '16:45',
-      risk: 'High',
-      event: 'Peak crowd density expected',
-      probability: 0.89,
-      mitigation: 'Activate crowd diversion protocols'
-    },
-    {
-      time: '18:00',
-      risk: 'Low',
-      event: 'Event conclusion, mass exodus',
-      probability: 0.45,
-      mitigation: 'Open all exit gates'
-    },
-  ];
-
-  const getScoreColor = (score: number) => {
-    if (score > 0.7) return 'bg-red-500';
-    if (score > 0.4) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
-
-  const getScoreTextColor = (score: number) => {
-    if (score > 0.7) return 'text-red-400';
-    if (score > 0.4) return 'text-yellow-400';
-    return 'text-green-400';
-  };
-
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case 'increasing': return '↗';
-      case 'decreasing': return '↘';
-      default: return '→';
+  const getRiskLevelConfig = (level: string) => {
+    switch (level) {
+      case 'CRITICAL':
+        return {
+          color: 'red',
+          bg: 'bg-red-500/20',
+          border: 'border-red-500',
+          text: 'text-red-400',
+          icon: AlertOctagon,
+          pulse: true,
+        };
+      case 'HIGH':
+        return {
+          color: 'orange',
+          bg: 'bg-orange-500/20',
+          border: 'border-orange-500',
+          text: 'text-orange-400',
+          icon: AlertTriangle,
+          pulse: false,
+        };
+      case 'MEDIUM':
+        return {
+          color: 'amber',
+          bg: 'bg-amber-500/20',
+          border: 'border-amber-500',
+          text: 'text-amber-400',
+          icon: AlertTriangle,
+          pulse: false,
+        };
+      default:
+        return {
+          color: 'emerald',
+          bg: 'bg-emerald-500/20',
+          border: 'border-emerald-500',
+          text: 'text-emerald-400',
+          icon: CheckCircle,
+          pulse: false,
+        };
     }
   };
 
+  const riskConfig = getRiskLevelConfig(riskData.overallRiskLevel);
+  const RiskIcon = riskConfig.icon;
+
   return (
     <div className="space-y-6">
-      {/* Overall Risk Score */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-6 flex items-center">
-          <Shield className="h-5 w-5 mr-2 text-blue-400" />
-          Overall Risk Assessment
-        </h3>
-        <div className="flex items-center justify-center mb-6">
-          <div className="relative w-32 h-32">
-            <svg className="w-32 h-32 transform -rotate-90">
-              <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="currentColor"
-                strokeWidth="8"
-                fill="transparent"
-                className="text-gray-700"
-              />
-              <circle
-                cx="64"
-                cy="64"
-                r="56"
-                stroke="currentColor"
-                strokeWidth="8"
-                fill="transparent"
-                strokeDasharray={`${2 * Math.PI * 56}`}
-                strokeDashoffset={`${2 * Math.PI * 56 * (1 - riskScore)}`}
-                className={riskScore > 0.7 ? 'text-red-500' : riskScore > 0.4 ? 'text-yellow-500' : 'text-green-500'}
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className={`text-2xl font-bold ${getScoreTextColor(riskScore)}`}>
-                  {Math.round(riskScore * 100)}
-                </div>
-                <div className="text-sm text-gray-400">Risk Score</div>
-              </div>
-            </div>
+      {/* Header */}
+      <div className="bg-gradient-to-r from-red-900/50 to-orange-900/50 rounded-xl p-6 border border-red-500/30">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+            <Shield className="w-8 h-8 text-white" />
           </div>
-        </div>
-        <div className="text-center">
-          <div className={`text-lg font-semibold mb-2 ${getScoreTextColor(riskScore)}`}>
-            {riskScore > 0.7 ? 'High Risk' : riskScore > 0.4 ? 'Medium Risk' : 'Low Risk'}
-          </div>
-          <div className="text-sm text-gray-400">
-            Based on real-time analysis of multiple risk factors
+          <div>
+            <h1 className="text-3xl font-bold text-white">Risk Assessment</h1>
+            <p className="text-red-200 text-sm">Predictive safety analytics based on real-time occupancy</p>
           </div>
         </div>
       </div>
 
-      {/* Risk Factors Breakdown */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <TrendingUp className="h-5 w-5 mr-2 text-blue-400" />
-          Risk Factors Analysis
-        </h3>
-        <div className="space-y-4">
-          {riskFactors.map((factor, index) => {
-            const Icon = factor.icon;
-            return (
-              <div key={index} className="bg-gray-700 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-3">
-                    <Icon className="h-5 w-5 text-blue-400" />
-                    <span className="font-medium text-white">{factor.name}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-400">{getTrendIcon(factor.trend)}</span>
-                    <span className={`text-sm font-medium ${getScoreTextColor(factor.score)}`}>
-                      {Math.round(factor.score * 100)}%
-                    </span>
-                  </div>
-                </div>
-                <div className="w-full bg-gray-600 rounded-full h-2 mb-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-300 ${getScoreColor(factor.score)}`}
-                    style={{ width: `${factor.score * 100}%` }}
-                  ></div>
-                </div>
-                <div className="text-sm text-gray-400">{factor.details}</div>
-              </div>
-            );
-          })}
+      {/* No Data State */}
+      {stats.checkedIn === 0 ? (
+        <div className="bg-slate-800 rounded-xl p-12 border border-slate-700 text-center">
+          <Shield className="w-16 h-16 text-slate-500 mx-auto mb-4 opacity-50" />
+          <h3 className="text-xl font-semibold text-white mb-2">Risk Assessment Inactive</h3>
+          <p className="text-slate-400 mb-4">
+            No attendees checked in. Risk analysis requires active attendance data.
+          </p>
+          <div className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500/20 border border-emerald-500/30 rounded-lg">
+            <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <span className="text-emerald-400 font-medium">All zones safe - No current risk</span>
+          </div>
         </div>
-      </div>
-
-      {/* Predictive Risk Timeline */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <Clock className="h-5 w-5 mr-2 text-blue-400" />
-          Predictive Risk Timeline
-        </h3>
-        <div className="space-y-4">
-          {predictions.map((prediction, index) => (
-            <div key={index} className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center space-x-3">
-                  <div className="text-blue-400 font-mono text-sm">{prediction.time}</div>
-                  <span className="text-white font-medium">{prediction.event}</span>
-                </div>
-                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  prediction.risk === 'High' ? 'bg-red-900/20 text-red-400' :
-                  prediction.risk === 'Medium' ? 'bg-yellow-900/20 text-yellow-400' :
-                  'bg-green-900/20 text-green-400'
-                }`}>
-                  {prediction.risk}
-                </span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-gray-400">Probability: </span>
-                  <span className="text-white">{Math.round(prediction.probability * 100)}%</span>
+      ) : (
+        <>
+          {/* Overall Risk Status */}
+          <div className={`bg-slate-800 rounded-xl p-6 border-2 ${riskConfig.border}`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className={`w-16 h-16 ${riskConfig.bg} rounded-xl flex items-center justify-center ${riskConfig.pulse ? 'animate-pulse' : ''}`}>
+                  <RiskIcon className={`w-8 h-8 ${riskConfig.text}`} />
                 </div>
                 <div>
-                  <span className="text-gray-400">Mitigation: </span>
-                  <span className="text-white">{prediction.mitigation}</span>
+                  <p className="text-slate-400 text-sm mb-1">Overall Risk Level</p>
+                  <p className={`text-3xl font-bold ${riskConfig.text}`}>
+                    {riskData.overallRiskLevel}
+                  </p>
                 </div>
               </div>
-              <div className="mt-3 w-full bg-gray-600 rounded-full h-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    prediction.probability > 0.7 ? 'bg-red-500' : 
-                    prediction.probability > 0.4 ? 'bg-yellow-500' : 'bg-green-500'
-                  }`}
-                  style={{ width: `${prediction.probability * 100}%` }}
-                ></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      {/* AI Recommendations */}
-      <div className="bg-gray-800 rounded-lg p-6">
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <AlertTriangle className="h-5 w-5 mr-2 text-blue-400" />
-          AI-Generated Recommendations
-        </h3>
-        <div className="space-y-3">
-          {[
-            {
-              priority: 'High',
-              action: 'Deploy additional crowd control barriers near main stage',
-              reason: 'High crowd density detected with potential for bottleneck formation'
-            },
-            {
-              priority: 'Medium',
-              action: 'Increase medical staff presence in food court area',
-              reason: 'Heat index rising, potential for heat-related incidents'
-            },
-            {
-              priority: 'Low',
-              action: 'Activate overflow parking areas',
-              reason: 'Parking capacity at 85%, may reach limit within 2 hours'
-            },
-          ].map((rec, index) => (
-            <div key={index} className="bg-gray-700 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className={`px-2 py-1 rounded text-xs font-medium ${
-                  rec.priority === 'High' ? 'bg-red-900/20 text-red-400' :
-                  rec.priority === 'Medium' ? 'bg-yellow-900/20 text-yellow-400' :
-                  'bg-blue-900/20 text-blue-400'
-                }`}>
-                  {rec.priority} Priority
-                </span>
-                <button className="text-blue-400 hover:text-blue-300 text-sm">
-                  Implement
-                </button>
+              <div className="text-right">
+                <p className="text-slate-400 text-sm mb-1">Incident Probability</p>
+                <div className="flex items-baseline gap-2">
+                  <span className={`text-4xl font-bold ${riskConfig.text}`}>
+                    {riskData.incidentProbability}
+                  </span>
+                  <span className="text-xl text-slate-400">%</span>
+                </div>
               </div>
-              <div className="text-white font-medium mb-1">{rec.action}</div>
-              <div className="text-sm text-gray-400">{rec.reason}</div>
             </div>
-          ))}
-        </div>
-      </div>
+
+            {riskData.overallRiskLevel !== 'LOW' && (
+              <div className={`mt-4 p-3 ${riskConfig.bg} border ${riskConfig.border} rounded-lg`}>
+                <div className="flex items-center gap-2">
+                  <AlertTriangle className={`w-5 h-5 ${riskConfig.text}`} />
+                  <p className={`font-medium ${riskConfig.text}`}>
+                    {riskData.overallRiskLevel === 'CRITICAL'
+                      ? '⚠️ CRITICAL: Immediate action required!'
+                      : riskData.overallRiskLevel === 'HIGH'
+                      ? '⚠️ HIGH RISK: Enhanced monitoring activated'
+                      : '⚠️ Elevated risk levels detected'}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* High Risk Zones */}
+          {riskData.highRiskZones.length > 0 ? (
+            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+              <div className="flex items-center gap-3 mb-6">
+                <AlertTriangle className="w-6 h-6 text-orange-400" />
+                <h3 className="text-xl font-semibold text-white">High Risk Zones</h3>
+                <span className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm font-semibold">
+                  {riskData.highRiskZones.length} Alert{riskData.highRiskZones.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {riskData.highRiskZones.map((zone) => {
+                  const zoneConfig = getRiskLevelConfig(zone.riskLevel);
+                  const ZoneIcon = zoneConfig.icon;
+                  const percentage = (zone.occupancy / zone.capacity) * 100;
+
+                  return (
+                    <div
+                      key={zone.id}
+                      className={`bg-slate-700/50 rounded-lg p-5 border-2 ${zoneConfig.border} ${
+                        zoneConfig.pulse ? 'animate-pulse' : ''
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <ZoneIcon className={`w-6 h-6 ${zoneConfig.text}`} />
+                          <span className="text-white font-semibold">{zone.name}</span>
+                        </div>
+                        <span className={`px-3 py-1 ${zoneConfig.bg} ${zoneConfig.text} rounded-full text-sm font-bold`}>
+                          {zone.riskLevel}
+                        </span>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-slate-400 text-sm">Occupancy</span>
+                          <span className="text-white font-medium">
+                            {zone.occupancy} / {zone.capacity}
+                          </span>
+                        </div>
+
+                        <div className="w-full bg-slate-600 rounded-full h-3 overflow-hidden">
+                          <div
+                            className={`h-full bg-${zoneConfig.color}-500`}
+                            style={{ width: `${percentage}%` }}
+                          ></div>
+                        </div>
+
+                        <div className="flex justify-between items-center text-sm">
+                          <span className={zoneConfig.text}>{Math.round(percentage)}% Full</span>
+                          <span className="text-slate-400">
+                            {zone.capacity - zone.occupancy} available
+                          </span>
+                        </div>
+
+                        {zone.riskLevel === 'CRITICAL' && (
+                          <div className="mt-3 pt-3 border-t border-slate-600">
+                            <p className="text-red-400 text-sm font-medium flex items-center gap-2">
+                              <AlertOctagon className="w-4 h-4" />
+                              Immediate evacuation plan ready
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-emerald-900/30 to-teal-900/30 rounded-xl p-6 border border-emerald-500/30">
+              <div className="flex items-center gap-3 mb-2">
+                <CheckCircle className="w-6 h-6 text-emerald-400" />
+                <h3 className="text-xl font-semibold text-white">All Zones Safe</h3>
+              </div>
+              <p className="text-slate-300">No high-risk zones detected. All areas operating within safe capacity limits.</p>
+            </div>
+          )}
+
+          {/* Safety Recommendations */}
+          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+            <div className="flex items-center gap-3 mb-6">
+              <Shield className="w-6 h-6 text-cyan-400" />
+              <h3 className="text-xl font-semibold text-white">Safety Recommendations</h3>
+            </div>
+
+            <div className="space-y-3">
+              {riskData.recommendations.map((recommendation, index) => {
+                const isUrgent = recommendation.includes('🚨') || recommendation.includes('URGENT');
+                const isWarning = recommendation.includes('⚠️');
+
+                return (
+                  <div
+                    key={index}
+                    className={`flex items-start gap-3 p-4 rounded-lg border ${
+                      isUrgent
+                        ? 'bg-red-500/10 border-red-500/30'
+                        : isWarning
+                        ? 'bg-orange-500/10 border-orange-500/30'
+                        : 'bg-slate-700/50 border-slate-600'
+                    }`}
+                  >
+                    <div
+                      className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        isUrgent
+                          ? 'bg-red-500/20 text-red-400'
+                          : isWarning
+                          ? 'bg-orange-500/20 text-orange-400'
+                          : 'bg-cyan-500/20 text-cyan-400'
+                      }`}
+                    >
+                      {isUrgent || isWarning ? (
+                        <AlertTriangle className="w-4 h-4" />
+                      ) : (
+                        <CheckCircle className="w-4 h-4" />
+                      )}
+                    </div>
+                    <p
+                      className={`flex-1 ${
+                        isUrgent
+                          ? 'text-red-300 font-semibold'
+                          : isWarning
+                          ? 'text-orange-300 font-medium'
+                          : 'text-slate-300'
+                      }`}
+                    >
+                      {recommendation}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Risk Metrics Summary */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-slate-800 rounded-lg p-5 border border-slate-700">
+              <div className="flex items-center gap-3 mb-3">
+                <MapPin className="w-5 h-5 text-cyan-400" />
+                <span className="text-slate-400 text-sm">Total Zones</span>
+              </div>
+              <div className="text-3xl font-bold text-white">
+                {attendeeService.getZones().length}
+              </div>
+              <div className="text-slate-500 text-xs mt-1">
+                {riskData.highRiskZones.length} require attention
+              </div>
+            </div>
+
+            <div className="bg-slate-800 rounded-lg p-5 border border-slate-700">
+              <div className="flex items-center gap-3 mb-3">
+                <TrendingUp className="w-5 h-5 text-purple-400" />
+                <span className="text-slate-400 text-sm">Active Attendees</span>
+              </div>
+              <div className="text-3xl font-bold text-white">{stats.checkedIn}</div>
+              <div className="text-slate-500 text-xs mt-1">
+                of {stats.totalAttendees} registered
+              </div>
+            </div>
+
+            <div className="bg-slate-800 rounded-lg p-5 border border-slate-700">
+              <div className="flex items-center gap-3 mb-3">
+                <Shield className={`w-5 h-5 ${riskConfig.text}`} />
+                <span className="text-slate-400 text-sm">Risk Status</span>
+              </div>
+              <div className={`text-2xl font-bold ${riskConfig.text}`}>
+                {riskData.overallRiskLevel}
+              </div>
+              <div className="text-slate-500 text-xs mt-1">
+                {riskData.incidentProbability}% probability
+              </div>
+            </div>
+          </div>
+
+          {/* Live Monitoring Indicator */}
+          <div className="flex items-center justify-center gap-2 text-slate-500 text-sm">
+            <div className={`w-2 h-2 ${riskConfig.color === 'red' ? 'bg-red-400' : 'bg-cyan-400'} rounded-full animate-pulse`}></div>
+            <span>Risk assessment updates every 15 seconds based on zone occupancy</span>
+          </div>
+        </>
+      )}
     </div>
   );
 };
 
-export default RiskAssessment;
+export default IncidentManagement;

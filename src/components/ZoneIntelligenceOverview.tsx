@@ -101,7 +101,7 @@ class ZoneServiceClass {
           return { success: false, message: `${zone.name} is at full capacity` };
         }
       }
-    } catch (error) {
+    } catch {
       return { success: false, message: 'Invalid QR code' };
     }
   }
