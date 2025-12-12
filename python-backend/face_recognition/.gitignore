@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Face recognition data
+data/face_embeddings.json
+uploads/missing_persons/*.jpg
+uploads/missing_persons/*.png
+uploads/missing_persons/*.jpeg
+temp_*.jpg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+

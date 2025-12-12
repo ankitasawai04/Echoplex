@@ -1,0 +1,14 @@
+# Ignore venv folders ANYWHERE in the project (the ** does the magic)
+**/venv/
+**/.venv/
+**/env/
+
+# Ignore python cache anywhere
+**/__pycache__/
+
+# Ignore node_modules anywhere
+**/node_modules/
+
+# System files
+.DS_Store
+Thumbs.db

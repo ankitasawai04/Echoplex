@@ -1,0 +1,25 @@
+# Echoplex Face Recognition Backend Dependencies
+# Simplified version without dlib (install dlib separately)
+
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Computer Vision
+opencv-python==4.8.1.78
+Pillow==10.1.0
+numpy==1.26.4
+
+# Utilities
+pydantic==2.5.0
+
+# Note: dlib and face-recognition need to be installed separately:
+# Option 1: Install pre-built dlib wheel (if available)
+# pip install dlib-binary
+# pip install face-recognition
+
+# Option 2: Install CMake and Visual C++ Build Tools, then:
+# pip install dlib
+# pip install face-recognition
+

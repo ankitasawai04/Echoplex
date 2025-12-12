@@ -1,0 +1,26 @@
+# Echoplex Video Processing Service Dependencies
+
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+websockets==12.0
+pydantic==2.5.0
+
+# Computer Vision
+opencv-python==4.8.1.78
+numpy==1.26.4
+Pillow==10.1.0
+
+# YOLOv8 for Object Detection and Pose Estimation
+ultralytics==8.1.0
+torch==2.2.0
+torchvision==0.17.0
+
+# Optional: CLIP for advanced text-image matching
+# Uncomment if you want CLIP support:
+# git+https://github.com/openai/CLIP.git
+
+# Utilities
+python-multipart==0.0.6
+
+
